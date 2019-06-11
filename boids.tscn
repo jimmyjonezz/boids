@@ -16,5 +16,6 @@ texture = ExtResource( 2 )
 shape = SubResource( 1 )
 
 [node name="timer" type="Timer" parent="."]
+wait_time = 1.4
 autostart = true
 [connection signal="timeout" from="timer" to="." method="_on_timer_timeout"]
