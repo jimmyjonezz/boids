@@ -1,10 +1,13 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://boids/boids.gd" type="Script" id=1]
 [ext_resource path="res://icon.png" type="Texture" id=2]
 
 [sub_resource type="CircleShape2D" id=1]
 radius = 31.9627
+
+[sub_resource type="CircleShape2D" id=2]
+radius = 80.0146
 
 [node name="boids" type="KinematicBody2D"]
 script = ExtResource( 1 )
@@ -16,6 +19,13 @@ texture = ExtResource( 2 )
 shape = SubResource( 1 )
 
 [node name="timer" type="Timer" parent="."]
-wait_time = 1.4
+wait_time = 3.0
 autostart = true
+
+[node name="area" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="area"]
+shape = SubResource( 2 )
 [connection signal="timeout" from="timer" to="." method="_on_timer_timeout"]
+[connection signal="area_entered" from="area" to="." method="_on_area_area_entered"]
+[connection signal="area_exited" from="area" to="." method="_on_area_area_exited"]
