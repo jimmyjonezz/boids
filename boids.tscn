@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://boids/boids.gd" type="Script" id=1]
 [ext_resource path="res://16-16.png" type="Texture" id=2]
@@ -9,10 +9,28 @@ radius = 8.31114
 [sub_resource type="CircleShape2D" id=2]
 radius = 25.0
 
+[sub_resource type="Animation" id=3]
+resource_name = "walk"
+length = 0.25
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("image:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.05, 0.15 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ Vector2( 0, 0 ), Vector2( 0, -3 ), Vector2( 0, 0 ) ]
+}
+
 [node name="boids" type="KinematicBody2D"]
 script = ExtResource( 1 )
 
 [node name="image" type="Sprite" parent="."]
+position = Vector2( 0, -1.60762 )
 texture = ExtResource( 2 )
 vframes = 4
 hframes = 6
@@ -20,6 +38,7 @@ frame = 18
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource( 1 )
+disabled = true
 
 [node name="timer" type="Timer" parent="."]
 wait_time = 4.0
@@ -29,5 +48,9 @@ autostart = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="area"]
 shape = SubResource( 2 )
+
+[node name="anim" type="AnimationPlayer" parent="."]
+autoplay = "walk"
+anims/walk = SubResource( 3 )
 [connection signal="area_entered" from="area" to="." method="_on_area_area_entered"]
 [connection signal="area_exited" from="area" to="." method="_on_area_area_exited"]
