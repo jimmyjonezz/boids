@@ -16,6 +16,7 @@ var FOLLOW_SPEED = 1
 var touch = false
 
 func _ready() -> void:
+	_boids()
 	randomize()
 	_rand_destination()
 	$anim.seek(rand_range(1, 3))
@@ -23,55 +24,42 @@ func _ready() -> void:
 func _physics_process(delta) -> void:
 	acceleration = Vector2.ZERO
 	var distance = (destination - position).length()
-	#var angle = (destination - position).angle()
 	
 	if !touch:
 		vector = (destination - position).normalized() * max_velocity
 	else:
 		vector = (position - destination).normalized() * max_velocity
-		_next()
+		_boids()
 	
 	_direction()
 	
 	velocity = velocity.linear_interpolate(vector, delta * FOLLOW_SPEED)
 	
-	if distance < 15:
+	var rnd = rand_range(10, 20)
+	if distance < rnd:
 		_friction()
-	
-	if distance < 2:
-		_rand_destination()
-	
-	#_friction()
-	#velocity += acceleration * delta
 		
 	var collision = move_and_collide(velocity)
 	if collision:
-		return
-	    #print(collision)
-		#var reflect = collision.remainder.bounce(collision.normal)
-	    #velocity = velocity.bounce(collision.normal)
-	    #move_and_collide(reflect)
-
-	#print("destination: %s, pos: %s, vec: %s, vel: %s" % 
-	#		[destination, position, vector, velocity])
+		print(collision)
 	
-func _next():
-	#print(position)
-	var child = get_parent().get_children()
-	#print(child)
-	var rand_count = randi() % child.size()
-	child_pos = child[rand_count].global_position
-	#print(rand_cound)
-	if position.round() == child_pos.round():
-		child_pos = child[rand_count].global_position
-	else:
-		_next()
-	#print(destination)
+	update()
+	
+func _boids():
+	var end = Vector2.ZERO
+	var n = get_node("../../YSort").get_children()
+	var count = get_node("../../YSort").get_children().size()
+	for x in n:
+		end += x.position
+		
+	var num = end / count
+	return num
 
 func _rand_destination() -> void:
 	destination = Vector2(randf() * get_viewport_rect().size.x / 3,
 			randf() * get_viewport_rect().size.y / 3)
 
+#поворот спрайта
 func _direction():
 	if sign(vector.x) == 1:
 		$image.flip_h = true
@@ -90,7 +78,8 @@ func _on_area_area_entered(area):
 
 func _on_area_area_exited(area):
 	if area is Area2D:
-		#_rand_destination()
-		yield(get_tree().create_timer(0.6), "timeout")
+		_boids()
 		touch = false
-		_rand_destination()
+		
+func _draw():
+	draw_circle(_boids(), 10, ColorN("red", 1.0))
